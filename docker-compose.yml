@@ -1,0 +1,93 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik
+    restart: unless-stopped
+    command: -c /dev/null --web --docker --logLevel=DEBUG
+    ports:
+      - 80:80
+      - 81:8080
+      - 8025:8025
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # - ./traefik/traefik.toml:/etc/traefik/traefik.toml
+
+  portainer:
+    image: portainer/portainer
+    restart: unless-stopped
+    command: --no-auth -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - 'traefik.backend=portainer'
+      - 'traefik.port=9000'
+      - 'traefik.frontend.rule=Host:localhost.portainer'
+
+  mysql:
+    build:
+      context: ./bin/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      # Only specify the DB_NAME if we want a db created with this name
+      # MYSQL_DATABASE: "${DB_NAME}"
+    restart: unless-stopped
+    volumes:
+      - ./var/lib/mysql:/var/lib/mysql
+    depends_on:
+      - traefik
+
+  redis:
+    image: redis:4.0.9-alpine
+    volumes:
+      - ./var/lib/redis/data:/data
+
+  web:
+    build:
+      context: ./bin/web
+    environment:
+      # Set locale to UTF-8 (https://oncletom.io/2015/docker-encoding/)
+      LANG: C.UTF-8
+
+      # REDIS is linked
+      REDIS_HOST: redis
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    volumes:
+      - ./usr/share/nginx/html:/usr/share/nginx/html
+      - ./var/log:/var/log
+      - ./usr/share/nginx/craft/config:/usr/share/nginx/craft/config
+    labels:
+      - 'traefik.backend=web'
+      - 'traefik.port=8000'
+      - 'traefik.frontend.rule=Host:localhost.web'
+    depends_on:
+      - mysql
+      - redis
+
+  ## APACHE
+  # web:
+  #   build:
+  #     context: ./bin/web
+  #   container_name: 'web'
+  #   restart: unless-stopped
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - ./www/html:/var/www/html
+  #     - ./config/php/php.ini:/usr/local/etc/php/php.ini
+  #     - ./config/vhosts:/etc/apache2/sites-available
+  #     - ./logs/apache2:/var/log/apache2
+  #   labels:
+  #     - 'traefik.backend=web'
+  #     - 'traefik.port=80'
+  #     - 'traefik.frontend.rule=Host:localhost.web'
+  #   networks:
+  #     - database
+  #     - server
+  #   depends_on:
+  #     - mysql

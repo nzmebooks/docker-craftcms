@@ -1,0 +1,12 @@
+/.env
+/usr/share/nginx/craft/config/*
+/var/lib/mysql/*
+/var/log/*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+/.vscode
+/.idea
