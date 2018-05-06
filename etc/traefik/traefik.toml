@@ -43,32 +43,31 @@ defaultEntryPoints = ["http", "https"]
   [entryPoints.https]
     address = ":443"
     [entryPoints.https.tls]
-    # As we can now do basic auth per frontend, we don't need to
-    # do it across an entire entrypoint.
-    # https://blog.containo.us/traefik-1-3-get-some-more-raclette-1046664d862b#a34c
-    # [entryPoints.https.auth.basic]
-    # usersFile = "/usr/local/share/.auth"
+      [[entryPoints.https.tls.certificates]]
+      # Traefik should attempt to use the following cert if it finds a
+      # service with a domain of local.host, otherwise use Lets Encrypt
+      # to generate a cert.
+      # This allows us to use the following for local development (as Lets Encrypt
+      # won't be able to verify them), but defer to Lets Encrypt when on a real server.
+      certFile = "/etc/traefik/local.host.crt"
+      keyFile = "/etc/traefik/local.host.key"
 
   # Traefik status page
   [entryPoints.traefik]
      address = ":8080"
      [entryPoints.traefik.auth.basic]
-#       users = [
-#         "test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/",
-#         "administrator:$2y$05$pXoE.HlVqv/FLcsdSmF4/eMLPtctsbQrLGWQ1FM7FOe/W7lWcNv.q"
-#       ]
         usersFile = "/usr/local/share/.auth"
 
 # Enable ACME (Let's Encrypt): automatic SSL
 # https://docs.traefik.io/user-guide/examples/#basic-example-with-http-challenge
 [acme]
   email = "mebooks.support@gmail.com"
-  storageFile = "/etc/traefik/acme.json"
+  storage = "/etc/traefik/acme.json"
   entryPoint = "https"
   acmeLogging = true
   # onDemand = true # not necessary since frontend / backend are included as labels in docker
   onDemand = false
-  OnHostRule = true
+  onHostRule = true
   [acme.httpChallenge]
     entryPoint = "http"
 

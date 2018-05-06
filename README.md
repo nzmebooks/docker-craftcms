@@ -9,13 +9,47 @@ This is a docker-compose project to run up a LEMP stack comprising of:
 * PHP
 * Redis
 
-You'll want to ensure DNS is set for the following routes pointing to 127.0.0.1, either in the hosts file or possibly using [Dnsmasq](https://github.com/elalemanyo/docker-localhost#hosts-file---wildcard-dns-domain-on-mac-os-x):
+The intention is to setup a stack that can be used for local development, but that can also be deployed to a production machine.
 
-* localhost.traefik
-* localhost.portainer
-* localhost.web
+
+# Setup
+
+Copy `.env.example` to `.env`, and amend accordingly.
+
+The value of `DOMAIN` specifies the domain that the services will be exposed as. Given the default of `local.host`, we'll endup with:
+
+* traefik.local.host
+* portainer.local.host
+* web.local.host
+
+If you're developing locally, you'll want to ensure DNS is set in `/etc/hosts` for the above routes pointing to 127.0.0.1:
+
+```
+127.0.0.1	traefik.local.host
+127.0.0.1	portainer.local.host
+127.0.0.1	web.local.host
+```
+
+Alternatively, you could use [Dnsmasq](https://github.com/elalemanyo/docker-localhost#hosts-file---wildcard-dns-domain-on-mac-os-x).
+
+
+If you want to use a domain other than the default `local.host` domain, you'll want to create a cert -- we suggest using the [wildcard](https://github.com/jcdarwin/wildcard) script, but that's up to you.
+
+Once your cert has been created, you'll want to copy them to `/etc/traefik/`, and amend the following lines in `/etc/traefik/traefik.toml` accordingly:
+
+      certFile = "/etc/traefik/local.host.crt"
+      keyFile = "/etc/traefik/local.host.key"
+
+Presuming you're on a Mac, you'll also want to register the cert as trusted so the browser doesn't complain -- this can be done at the command line using a command such as the following:
+
+    sudo security add-trusted-cert -d  -k /Library/Keychains/System.keychain ./etc/traefik/local.host.crt
+
+Note: originally we did try to use `localhost` as our domain, however Chrome doesn't seem to like a domain with only a single step.
+
 
 # Usage
+
+Use `docker-compose` to start, stop and destroy the stack:
 
     # starting
     docker-compose up -d --build
@@ -23,5 +57,16 @@ You'll want to ensure DNS is set for the following routes pointing to 127.0.0.1,
     # stopping
     docker-compose stop
 
-    # killing
+    # destroy
     docker-compose down
+
+Once the stack is up, you should be able to visit the following in your browser:
+
+* https://traefik.local.host
+* https://portainer.local.host
+* https://web.local.host
+
+
+# Further reading
+
+* https://deliciousbrains.com/https-locally-without-browser-privacy-errors/
