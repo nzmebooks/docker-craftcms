@@ -12,7 +12,8 @@ ADD ./default.conf /etc/nginx/conf.d/default.conf
 
 # Add default config
 # ADD ./config /usr/share/nginx/craft/config
-RUN mkdir -p /usr/share/nginx/craft/config
+RUN mkdir -p /usr/share/nginx/craft/config \
+    && mkdir -p /var/log/nginx
 
 # Cleanup
 RUN chown -Rf nginx:nginx /usr/share/nginx/

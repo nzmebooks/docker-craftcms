@@ -1,6 +1,7 @@
 /.env
 /usr/share/nginx/craft/config/*
 /var/lib/mysql/*
+/var/lib/redis/*
 /var/log/*
 
 # OS

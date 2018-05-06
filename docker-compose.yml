@@ -2,19 +2,33 @@ version: '3'
 
 services:
   traefik:
-    image: traefik
+    build:
+      context: ./bin/traefik
+      args:
+        - BASIC_AUTH_USERNAME=$BASIC_AUTH_USERNAME
+        - BASIC_AUTH_PASSWORD=$BASIC_AUTH_PASSWORD
+    container_name: 'localhost.traefik'
     restart: unless-stopped
-    command: -c /dev/null --web --docker --logLevel=DEBUG
+    command: -c /dev/null --api --docker --logLevel=DEBUG --configFile=/etc/traefik/traefik.toml
     ports:
       - 80:80
-      - 81:8080
+      - 443:443
       - 8025:8025
+    expose:
+      - 8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      # - ./traefik/traefik.toml:/etc/traefik/traefik.toml
+      - ./etc/traefik:/etc/traefik
+      - ./var/log/traefik:/var/log/traefik
+    labels:
+      traefik.enable: "true"
+      traefik.backend: traefik
+      traefik.frontend.rule: "Host:localhost.traefik"
+      traefik.port: "8080"
 
   portainer:
     image: portainer/portainer
+    container_name: 'localhost.portainer'
     restart: unless-stopped
     command: --no-auth -H unix:///var/run/docker.sock
     volumes:
@@ -27,6 +41,7 @@ services:
   mysql:
     build:
       context: ./bin/mysql
+    container_name: 'localhost.mysql'
     environment:
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
       MYSQL_USER: "${DB_USERNAME}"
@@ -41,12 +56,14 @@ services:
 
   redis:
     image: redis:4.0.9-alpine
+    container_name: 'localhost.redis'
     volumes:
       - ./var/lib/redis/data:/data
 
   web:
     build:
       context: ./bin/web
+    container_name: 'localhost.web'
     environment:
       # Set locale to UTF-8 (https://oncletom.io/2015/docker-encoding/)
       LANG: C.UTF-8
@@ -54,16 +71,15 @@ services:
       # REDIS is linked
       REDIS_HOST: redis
     restart: unless-stopped
-    ports:
-      - 8000:80
     volumes:
       - ./usr/share/nginx/html:/usr/share/nginx/html
       - ./var/log:/var/log
       - ./usr/share/nginx/craft/config:/usr/share/nginx/craft/config
     labels:
       - 'traefik.backend=web'
-      - 'traefik.port=8000'
+      - 'traefik.port=80'
       - 'traefik.frontend.rule=Host:localhost.web'
+      - 'traefik.frontend.passHostHeader'
     depends_on:
       - mysql
       - redis

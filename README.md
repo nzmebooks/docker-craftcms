@@ -11,9 +11,17 @@ This is a docker-compose project to run up a LEMP stack comprising of:
 
 You'll want to ensure DNS is set for the following routes pointing to 127.0.0.1, either in the hosts file or possibly using [Dnsmasq](https://github.com/elalemanyo/docker-localhost#hosts-file---wildcard-dns-domain-on-mac-os-x):
 
+* localhost.traefik
 * localhost.portainer
 * localhost.web
 
-# Start
+# Usage
 
+    # starting
     docker-compose up -d --build
+
+    # stopping
+    docker-compose stop
+
+    # killing
+    docker-compose down
