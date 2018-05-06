@@ -1,4 +1,4 @@
-# So we can use /bin/ash to shell into the container
+# Use traefik:alpine so we can use /bin/ash to shell into the container
 FROM traefik:alpine
 
 ARG BASIC_AUTH_USERNAME

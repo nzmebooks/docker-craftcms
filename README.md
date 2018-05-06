@@ -11,6 +11,8 @@ This is a docker-compose project to run up a LEMP stack comprising of:
 
 The intention is to setup a stack that can be used for local development, but that can also be deployed to a production machine.
 
+We use basic auth on the traefik and portainer services, to allow a semblance of security in a production setting.
+
 
 # Setup
 
@@ -37,8 +39,8 @@ If you want to use a domain other than the default `local.host` domain, you'll w
 
 Once your cert has been created, you'll want to copy them to `/etc/traefik/`, and amend the following lines in `/etc/traefik/traefik.toml` accordingly:
 
-      certFile = "/etc/traefik/local.host.crt"
-      keyFile = "/etc/traefik/local.host.key"
+    certFile = "/etc/traefik/local.host.crt"
+    keyFile = "/etc/traefik/local.host.key"
 
 Presuming you're on a Mac, you'll also want to register the cert as trusted so the browser doesn't complain -- this can be done at the command line using a command such as the following:
 
@@ -69,4 +71,10 @@ Once the stack is up, you should be able to visit the following in your browser:
 
 # Further reading
 
+* http://tech.osteel.me/posts/2017/01/15/how-to-use-docker-for-local-web-development-an-update.html
 * https://deliciousbrains.com/https-locally-without-browser-privacy-errors/
+
+* https://github.com/wyveo/craftcms-docker/blob/craft2/docker-compose.yml
+* [Craft CMS docker-compose dev setup](https://gist.github.com/jackmcpickle/59efc98a99c067b08020)
+* https://github.com/pnglabz/docker-compose-lamp
+* https://github.com/elalemanyo/docker-localhost

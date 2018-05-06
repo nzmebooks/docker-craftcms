@@ -34,9 +34,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      traefik.backend: "portainer"
-      traefik.port: "9000"
-      traefik.frontend.rule: "Host:portainer.${DOMAIN-docker-host}"
+      # Use the following yaml formatting to allow our basic auth
+      # variables to be properly escaped
+      - "traefik.backend=portainer"
+      - "traefik.port=9000"
+      - "traefik.frontend.rule=Host:portainer.${DOMAIN-docker-host}"
+      - 'traefik.frontend.auth.basic=${BASIC_AUTH_USERNAME}:${BASIC_AUTH_PASSWORD_ENCRYPTED}'
+    depends_on:
+      - traefik
 
   mysql:
     build:
@@ -59,6 +64,8 @@ services:
     container_name: "redis.${DOMAIN-docker-host}"
     volumes:
       - ./var/lib/redis/data:/data
+    depends_on:
+      - traefik
 
   web:
     build:
