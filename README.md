@@ -20,9 +20,9 @@ Copy `.env.example` to `.env`, and amend accordingly.
 
 The value of `DOMAIN` specifies the domain that the services will be exposed as. Given the default of `local.host`, we'll endup with:
 
-* traefik.local.host
-* portainer.local.host
-* web.local.host
+* https://traefik.local.host
+* https://portainer.local.host
+* https://web.local.host
 
 If you're developing locally, you'll want to ensure DNS is set in `/etc/hosts` for the above routes pointing to 127.0.0.1:
 
@@ -73,7 +73,6 @@ Once the stack is up, you should be able to visit the following in your browser:
 
 * http://tech.osteel.me/posts/2017/01/15/how-to-use-docker-for-local-web-development-an-update.html
 * https://deliciousbrains.com/https-locally-without-browser-privacy-errors/
-
 * https://github.com/wyveo/craftcms-docker/blob/craft2/docker-compose.yml
 * [Craft CMS docker-compose dev setup](https://gist.github.com/jackmcpickle/59efc98a99c067b08020)
 * https://github.com/pnglabz/docker-compose-lamp
