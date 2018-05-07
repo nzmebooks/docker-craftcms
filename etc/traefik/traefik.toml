@@ -61,7 +61,8 @@ defaultEntryPoints = ["http", "https"]
 # Enable ACME (Let's Encrypt): automatic SSL
 # https://docs.traefik.io/user-guide/examples/#basic-example-with-http-challenge
 [acme]
-  email = "mebooks.support@gmail.com"
+  # Email will be supplied via the command line
+  # email = "whoever@example.com"
   storage = "/etc/traefik/acme.json"
   entryPoint = "https"
   acmeLogging = true

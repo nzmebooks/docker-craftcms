@@ -9,7 +9,7 @@ services:
         - BASIC_AUTH_PASSWORD=$BASIC_AUTH_PASSWORD
     container_name: "traefik.${DOMAIN-docker-host}"
     restart: unless-stopped
-    command: -c /dev/null --api --docker --logLevel=DEBUG --configFile=/etc/traefik/traefik.toml
+    command: -c /dev/null --api --docker --logLevel=DEBUG --acme.email=$EMAIL --configFile=/etc/traefik/traefik.toml
     ports:
       - 80:80
       - 443:443
