@@ -2,7 +2,9 @@
 /usr/share/nginx/craft/config/*
 /var/lib/mysql/*
 /var/lib/redis/*
+
 /var/log/*
+!/var/log/*/
 
 # OS
 .DS_Store
