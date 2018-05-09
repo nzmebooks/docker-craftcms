@@ -94,6 +94,11 @@ To connect to MySQL via, you'll need to do something like the following:
     unzip -qqo $CRAFT_ZIP 'craft/*' -d ./
     unzip -qqoj $CRAFT_ZIP 'public/index.php' -d ./
 
+    # link a local conf.d to nginx
+    DOCKER_HOST_DIR=~/workspace/docker-host
+    ln -s $DOCKER_HOST_DIR/volumes/etc/nginx/conf.d/ conf.d
+    ln -s $DOCKER_HOST_DIR/volumes/etc/nginx/craft/config/db.php craft/config/db.php
+    ln -s $DOCKER_HOST_DIR/volumes/etc/nginx/craft/config/rediscache.php craft/config/rediscache.php
 
 # Further reading
 

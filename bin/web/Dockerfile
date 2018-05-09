@@ -8,12 +8,13 @@ sed -i -e "s/session.save_handler\s*=\s*.*/session.save_handler = redis/g" ${php
 sed -i -e "s/;session.save_path\s*=\s*.*/session.save_path = \"\${REDIS_PORT_6379_TCP}\"/g" ${php_conf}
 
 # Add default craft cms nginx config
-ADD ./default.conf /etc/nginx/conf.d/default.conf
+# ADD ./default.conf /etc/nginx/conf.d/default.conf
 
 # Add default config
-# ADD ./config /usr/share/nginx/craft/config
-RUN mkdir -p /usr/share/nginx/craft/config \
-    && mkdir -p /var/log/nginx
+# ADD ./craft/config /usr/share/nginx/craft/config
+
+# Create logs directory
+RUN mkdir -p /var/log/nginx
 
 # Cleanup
 RUN chown -Rf nginx:nginx /usr/share/nginx/
