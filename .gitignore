@@ -1,10 +1,10 @@
 /.env
-/usr/share/nginx/craft/config/*
-/var/lib/mysql/*
-/var/lib/redis/*
+/volumes/usr/share/nginx/craft/config/*
+/volumes/var/lib/mysql/*
+/volumes/var/lib/redis/*
 
-/var/log/*
-!/var/log/*/
+/volumes/var/log/*
+!/volumes/var/log/*/
 
 # OS
 .DS_Store

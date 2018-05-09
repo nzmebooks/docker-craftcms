@@ -18,8 +18,8 @@ services:
       - 8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./etc/traefik:/etc/traefik
-      - ./var/log/traefik:/var/log/traefik
+      - ./volumes/etc/traefik:/etc/traefik
+      - ./volumes/var/log/traefik:/var/log/traefik
     labels:
       traefik.enable: "true"
       traefik.backend: traefik
@@ -52,10 +52,12 @@ services:
       MYSQL_USER: "${DB_USERNAME}"
       MYSQL_PASSWORD: "${DB_PASSWORD}"
       # Only specify the DB_NAME if we want a db created with this name
-      # MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_DATABASE: "${DB_NAME}"
     restart: unless-stopped
+    ports:
+      - 3306:3306
     volumes:
-      - ./var/lib/mysql:/var/lib/mysql
+      - ./volumes/var/lib/mysql:/var/lib/mysql
     depends_on:
       - traefik
 
@@ -63,7 +65,7 @@ services:
     image: redis:4.0.9-alpine
     container_name: "redis.${DOMAIN-docker-host}"
     volumes:
-      - ./var/lib/redis/data:/data
+      - ./volumes/var/lib/redis/data:/data
     depends_on:
       - traefik
 
@@ -79,9 +81,9 @@ services:
       REDIS_HOST: redis
     restart: unless-stopped
     volumes:
-      - ./usr/share/nginx/html:/usr/share/nginx/html
-      - ./var/log:/var/log
-      - ./usr/share/nginx/craft/config:/usr/share/nginx/craft/config
+      - ./volumes/usr/share/nginx/html:/usr/share/nginx/html
+      - ./volumes/var/log:/var/log
+      - ./volumes/usr/share/nginx/craft/config:/usr/share/nginx/craft/config
     labels:
       traefik.backend: "web"
       traefik.port: "80"

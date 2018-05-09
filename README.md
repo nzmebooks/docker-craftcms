@@ -62,11 +62,24 @@ Use `docker-compose` to start, stop and destroy the stack:
     # destroy
     docker-compose down
 
+    # view service bindings
+    docker-compose ps
+
 Once the stack is up, you should be able to visit the following in your browser:
 
 * https://traefik.local.host
 * https://portainer.local.host
 * https://web.local.host
+
+## MySQL
+
+To connect to MySQL via, you'll need to do something like the following:
+
+    # for root access, entering <DB_ROOT_PASSWORD> as the password when challenged
+    mysql -u root -p -h 0.0.0.0
+
+    # for non-root access, entering <DB_PASSWORD> as the password when challenged
+    mysql -u <DB_USERNAME> -p -h 0.0.0.0
 
 
 # Further reading
