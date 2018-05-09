@@ -81,6 +81,7 @@ services:
       REDIS_HOST: redis
     restart: unless-stopped
     volumes:
+      - ./volumes/etc/nginx/conf.d:/etc/nginx/conf.d
       - ./volumes/usr/share/nginx/html:/usr/share/nginx/html
       - ./volumes/var/log:/var/log
       - ./volumes/usr/share/nginx/craft/config:/usr/share/nginx/craft/config

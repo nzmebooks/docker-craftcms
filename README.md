@@ -82,6 +82,19 @@ To connect to MySQL via, you'll need to do something like the following:
     mysql -u <DB_USERNAME> -p -h 0.0.0.0
 
 
+## Installing Craft 2
+
+    CRAFT_VERSION=2.6
+    CRAFT_BUILD=3015
+    CRAFT_ZIP=Craft-$CRAFT_VERSION.$CRAFT_BUILD.zip
+
+    mkdir craft2 && cd craft2
+    # also available as https://craftcms.com/latest-v2.zip
+    wget https://download.buildwithcraft.com/craft/$CRAFT_VERSION/$CRAFT_VERSION.$CRAFT_BUILD/$CRAFT_ZIP
+    unzip -qqo $CRAFT_ZIP 'craft/*' -d ./
+    unzip -qqoj $CRAFT_ZIP 'public/index.php' -d ./
+
+
 # Further reading
 
 * http://tech.osteel.me/posts/2017/01/15/how-to-use-docker-for-local-web-development-an-update.html
