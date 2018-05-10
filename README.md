@@ -120,7 +120,8 @@ Copy in our overrides
 Add a `.env` with appropriate settings to $SITE
 
     REDIS_HOST=redis
-    DB_HOST=0.0.0.0
+
+    DB_HOST=mysql
     DB_NAME=test
     DB_PORT=3306
     DB_USER=WHOEVER
@@ -151,9 +152,9 @@ Add our DNS to `/etc/hosts`
 
      sudo -- sh -c -e "echo '127.0.0.1\t$SITE' >> /etc/hosts";
 
-navigate to http://<HOSTNAME>/admin to begin installing Craft 2.
+navigate to https://<HOSTNAME>/admin to begin installing Craft 2.
 
-https://craft2.local.host/admin
+    https://craft2.local.host/admin
 
 
 # Further reading

@@ -82,13 +82,18 @@ services:
     restart: unless-stopped
     volumes:
       - ./volumes/etc/nginx/conf.d:/etc/nginx/conf.d
-      - ./volumes/usr/share/nginx/html:/usr/share/nginx/html
+      - ./volumes/usr/share/nginx:/usr/share/nginx
       - ./volumes/var/log:/var/log
-      - ./volumes/usr/share/nginx/craft/config:/usr/share/nginx/craft/config
     labels:
       traefik.backend: "web"
       traefik.port: "80"
-      traefik.frontend.rule: "Host:web.${DOMAIN-docker-host}"
+      # add multiple hosts
+      # either:
+      #   traefik.frontend.rule1=Host:example.com;Host:example2.com
+      # or
+      #   traefik.frontend.rule1=Host:example.com,example2.com
+      traefik.frontend.rule: "Host:web.${DOMAIN-docker-host},craft2.${DOMAIN-docker-host}"
+      # traefik.frontend.rule: "HostRegexp:{subdomain:[a-z]+}.${DOMAIN-docker-host}"
       traefik.frontend.passHostHeader: "true"
     depends_on:
       - mysql
