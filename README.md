@@ -87,7 +87,7 @@ To connect to MySQL via, you'll need to do something like the following:
 Set up environment variables
 
     DOCKER_HOST_DIR=~/workspace/docker-host
-    SITE=localhost.craft2
+    SITE=craft2.local.host
 
 Create our site directory
 
@@ -153,7 +153,7 @@ Add our DNS to `/etc/hosts`
 
 navigate to http://<HOSTNAME>/admin to begin installing Craft 2.
 
-http://localhost.craft2/admin
+https://craft2.local.host/admin
 
 
 # Further reading
