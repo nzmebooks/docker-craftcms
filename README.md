@@ -84,21 +84,77 @@ To connect to MySQL via, you'll need to do something like the following:
 
 ## Installing Craft 2
 
+Set up environment variables
+
+    DOCKER_HOST_DIR=~/workspace/docker-host
+    SITE=localhost.craft2
+
+Create our site directory
+
+    mkdir $SITE && cd $SITE
+
+Symlink our site directory to the docker-host nginx share
+
+    ln -s $DOCKER_HOST_DIR/volumes/usr/share/nginx/$SITE $SITE
+
+Download Craft2
+
+    # set environment variables
     CRAFT_VERSION=2.6
     CRAFT_BUILD=3015
     CRAFT_ZIP=Craft-$CRAFT_VERSION.$CRAFT_BUILD.zip
 
-    mkdir craft2 && cd craft2
     # also available as https://craftcms.com/latest-v2.zip
     wget https://download.buildwithcraft.com/craft/$CRAFT_VERSION/$CRAFT_VERSION.$CRAFT_BUILD/$CRAFT_ZIP
-    unzip -qqo $CRAFT_ZIP 'craft/*' -d ./
-    unzip -qqoj $CRAFT_ZIP 'public/index.php' -d ./
+
+Unzip Craft2 into our site directory
+
+    unzip -qqo $CRAFT_ZIP 'craft/*' -d $SITE
+    unzip -qqo $CRAFT_ZIP 'public/*' -d $SITE
+
+Copy in our overrides
+
+    cp $DOCKER_HOST_DIR/volumes/usr/share/nginx/localhost.example/public/index.php $SITE/public/index.php
+    cp $DOCKER_HOST_DIR/volumes/usr/share/nginx/localhost.example/craft/config/*.php $SITE/craft/config/
+
+Add a `.env` with appropriate settings to $SITE
+
+    REDIS_HOST=redis
+    DB_HOST=0.0.0.0
+    DB_NAME=test
+    DB_PORT=3306
+    DB_USER=WHOEVER
+    DB_PASS=WHATEVER
+
+Add a `composer.json` file  to $SITE and install
+
+    # composer.json
+    {
+      "require": {
+        "vlucas/phpdotenv": "^2.4"
+      }
+    }
+
+    # install
+    composer install -d $SITE
+
+Add our nginx conf
 
     # link a local conf.d to nginx
-    DOCKER_HOST_DIR=~/workspace/docker-host
     ln -s $DOCKER_HOST_DIR/volumes/etc/nginx/conf.d/ conf.d
-    ln -s $DOCKER_HOST_DIR/volumes/etc/nginx/craft/config/db.php craft/config/db.php
-    ln -s $DOCKER_HOST_DIR/volumes/etc/nginx/craft/config/rediscache.php craft/config/rediscache.php
+
+Add our nginx log directories
+
+    mkdir $DOCKER_HOST_DIR/volumes/var/log/nginx/$SITE
+
+Add our DNS to `/etc/hosts`
+
+     sudo -- sh -c -e "echo '127.0.0.1\t$SITE' >> /etc/hosts";
+
+navigate to http://<HOSTNAME>/admin to begin installing Craft 2.
+
+http://localhost.craft2/admin
+
 
 # Further reading
 
