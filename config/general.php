@@ -27,9 +27,6 @@ return array(
 	// Control Panel trigger word
 	'cpTrigger' => 'admin',
 
-	// Dev Mode (see https://craftcms.com/support/dev-mode)
-	'devMode' => false,
-
   'allowAutoUpdates' => false,
 
   'addTrailingSlashesToUrls' => true,
@@ -66,4 +63,7 @@ return array(
   // 'setPasswordSuccessPath'      => 'members',
   // 'activateAccountSuccessPath'  => 'members?activate=success',
   // 'activateAccountFailurePath'  => 'members?activate=fail',
+
+	// Dev Mode (see https://craftcms.com/support/dev-mode)
+	'devMode' => true,
 );

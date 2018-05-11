@@ -11,8 +11,8 @@ curl -L https://download.buildwithcraft.com/craft/$CRAFT_VERSION/$CRAFT_VERSION.
 
 # Extract craft
 echo "Unzipping $CRAFT_ZIP"
-unzip -qqo /tmp/$CRAFT_ZIP 'craft/*' && \
-unzip -qqoj /tmp/$CRAFT_ZIP 'public/index.php' -d ./html
+unzip -qqo /tmp/$CRAFT_ZIP 'craft/*' -d ./site&& \
+unzip -qqoj /tmp/$CRAFT_ZIP 'public/index.php' -d ./site/html
 
 echo "Moving in config"
 cp config/* ./site/craft/config/
