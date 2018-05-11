@@ -27,9 +27,15 @@ The value of `DOMAIN` specifies the domain that the services will be exposed as.
 If you're developing locally, you'll want to ensure DNS is set in `/etc/hosts` for the above routes pointing to 127.0.0.1:
 
 ```
-127.0.0.1	traefik.local.host
-127.0.0.1	portainer.local.host
-127.0.0.1	web.local.host
+# Adds:
+# 127.0.0.1	traefik.local.host
+# 127.0.0.1	portainer.local.host
+# 127.0.0.1	web.local.host
+
+DOMAIN=local.host
+sudo -- sh -c -e "echo '127.0.0.1\ttraefik.$DOMAIN' >> /etc/hosts";
+sudo -- sh -c -e "echo '127.0.0.1\tportainer.$DOMAIN' >> /etc/hosts";
+sudo -- sh -c -e "echo '127.0.0.1\tweb.$DOMAIN' >> /etc/hosts";
 ```
 
 Alternatively, you could use [Dnsmasq](https://github.com/elalemanyo/docker-localhost#hosts-file---wildcard-dns-domain-on-mac-os-x).
@@ -51,6 +57,10 @@ Note: originally we did try to use `localhost` as our domain, however Chrome doe
 
 # Usage
 
+Download craft and extract locally:
+
+    ./download.sh
+
 Use `docker-compose` to start, stop and destroy the stack:
 
     # starting
@@ -69,7 +79,12 @@ Once the stack is up, you should be able to visit the following in your browser:
 
 * https://traefik.local.host
 * https://portainer.local.host
-* https://web.local.host
+* https://web.local.host/info.php
+
+Navigate to https://<HOSTNAME>/admin to begin installing Craft 2.
+
+    https://web.local.host/admin
+
 
 ## MySQL
 
@@ -80,81 +95,6 @@ To connect to MySQL via, you'll need to do something like the following:
 
     # for non-root access, entering <DB_PASSWORD> as the password when challenged
     mysql -u <DB_USERNAME> -p -h 0.0.0.0
-
-
-## Installing Craft 2
-
-Set up environment variables
-
-    DOCKER_HOST_DIR=~/workspace/docker-host
-    SITE=craft2.local.host
-
-Create our site directory
-
-    mkdir $SITE && cd $SITE
-
-Symlink our site directory to the docker-host nginx share
-
-    ln -s $DOCKER_HOST_DIR/volumes/usr/share/nginx/$SITE $SITE
-
-Download Craft2
-
-    # set environment variables
-    CRAFT_VERSION=2.6
-    CRAFT_BUILD=3015
-    CRAFT_ZIP=Craft-$CRAFT_VERSION.$CRAFT_BUILD.zip
-
-    # also available as https://craftcms.com/latest-v2.zip
-    wget https://download.buildwithcraft.com/craft/$CRAFT_VERSION/$CRAFT_VERSION.$CRAFT_BUILD/$CRAFT_ZIP
-
-Unzip Craft2 into our site directory
-
-    unzip -qqo $CRAFT_ZIP 'craft/*' -d $SITE
-    unzip -qqo $CRAFT_ZIP 'public/*' -d $SITE
-
-Copy in our overrides
-
-    cp $DOCKER_HOST_DIR/volumes/usr/share/nginx/localhost.example/public/index.php $SITE/public/index.php
-    cp $DOCKER_HOST_DIR/volumes/usr/share/nginx/localhost.example/craft/config/*.php $SITE/craft/config/
-
-Add a `.env` with appropriate settings to $SITE
-
-    REDIS_HOST=redis
-
-    DB_HOST=mysql
-    DB_NAME=test
-    DB_PORT=3306
-    DB_USER=WHOEVER
-    DB_PASS=WHATEVER
-
-Add a `composer.json` file  to $SITE and install
-
-    # composer.json
-    {
-      "require": {
-        "vlucas/phpdotenv": "^2.4"
-      }
-    }
-
-    # install
-    composer install -d $SITE
-
-Add our nginx conf
-
-    # link a local conf.d to nginx
-    ln -s $DOCKER_HOST_DIR/volumes/etc/nginx/conf.d/ conf.d
-
-Add our nginx log directories
-
-    mkdir $DOCKER_HOST_DIR/volumes/var/log/nginx/$SITE
-
-Add our DNS to `/etc/hosts`
-
-     sudo -- sh -c -e "echo '127.0.0.1\t$SITE' >> /etc/hosts";
-
-navigate to https://<HOSTNAME>/admin to begin installing Craft 2.
-
-    https://craft2.local.host/admin
 
 
 # Further reading

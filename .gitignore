@@ -1,4 +1,7 @@
 /.env
+
+/craft
+
 /volumes/usr/share/nginx/*
 /volumes/var/lib/mysql/*
 /volumes/var/lib/redis/*

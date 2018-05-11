@@ -76,49 +76,24 @@ services:
     environment:
       # Set locale to UTF-8 (https://oncletom.io/2015/docker-encoding/)
       LANG: C.UTF-8
-
       # REDIS is linked
       REDIS_HOST: redis
+      # DB is linked
+      DB_HOST: mysql
+      DB_NAME: "${DB_NAME}"
+      DB_PORT: 3306
+      DB_USER: "${DB_USERNAME}"
+      DB_PASS: "${DB_PASSWORD}"
     restart: unless-stopped
     volumes:
-      - ./volumes/etc/nginx/conf.d:/etc/nginx/conf.d
-      - ./volumes/usr/share/nginx:/usr/share/nginx
+      - ./site/craft:/usr/share/nginx/craft
+      - ./site/html:/usr/share/nginx/html:ro
       - ./volumes/var/log:/var/log
     labels:
       traefik.backend: "web"
       traefik.port: "80"
-      # add multiple hosts
-      # either:
-      #   traefik.frontend.rule1=Host:example.com;Host:example2.com
-      # or
-      #   traefik.frontend.rule1=Host:example.com,example2.com
-      traefik.frontend.rule: "Host:web.${DOMAIN-docker-host},craft2.${DOMAIN-docker-host}"
-      # traefik.frontend.rule: "HostRegexp:{subdomain:[a-z]+}.${DOMAIN-docker-host}"
+      traefik.frontend.rule: "Host:web.${DOMAIN-docker-host}"
       traefik.frontend.passHostHeader: "true"
     depends_on:
       - mysql
       - redis
-
-  ## APACHE
-  # web:
-  #   build:
-  #     context: ./bin/web
-  #   container_name: 'web'
-  #   restart: unless-stopped
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   volumes:
-  #     - ./www/html:/var/www/html
-  #     - ./config/php/php.ini:/usr/local/etc/php/php.ini
-  #     - ./config/vhosts:/etc/apache2/sites-available
-  #     - ./logs/apache2:/var/log/apache2
-  #   labels:
-  #     - 'traefik.backend=web'
-  #     - 'traefik.port=80'
-  #     - 'traefik.frontend.rule=Host:localhost.web'
-  #   networks:
-  #     - database
-  #     - server
-  #   depends_on:
-  #     - mysql
