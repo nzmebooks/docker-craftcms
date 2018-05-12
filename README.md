@@ -11,10 +11,12 @@ This is a docker-compose project to run up a LEMP stack comprising of:
 
 The intention is to setup a stack that can be used for local development, but that can also be deployed to a production machine.
 
+Note that, unlike [craftcms-docker](https://github.com/nzmebooks/craftcms-docker/blob/craft2), we install Craft 2 locally, and then share this local folder into the web container.
+
 We use basic auth on the traefik and portainer services, to allow a semblance of security in a production setting.
 
 
-# Setup
+## Setup
 
 Copy `.env.example` to `.env`, and amend accordingly.
 
@@ -55,9 +57,9 @@ Presuming you're on a Mac, you'll also want to register the cert as trusted so t
 Note: originally we did try to use `localhost` as our domain, however Chrome doesn't seem to like a domain with only a single step.
 
 
-# Usage
+## Usage
 
-Download craft and extract locally:
+Download Craft 2 and extract locally:
 
     ./download.sh
 
@@ -74,6 +76,15 @@ Use `docker-compose` to start, stop and destroy the stack:
 
     # view service bindings
     docker-compose ps
+
+    # run a shell in the container
+    # note that some images (redis, traefik) use alpine, therefor bin/ash
+    docker exec -it web.local.host /bin/bash
+    docker exec -it redis.local.host /bin/ash
+
+    # view logs (also available via portainer)
+    docker logs web.local.host
+    docker exec -it web.local.host ls -la /var/log/
 
 Once the stack is up, you should be able to visit the following in your browser:
 
@@ -99,9 +110,9 @@ To connect to MySQL via, you'll need to do something like the following:
 
 # Further reading
 
+* https://github.com/wyveo/craftcms-docker/blob/craft2/docker-compose.yml
 * http://tech.osteel.me/posts/2017/01/15/how-to-use-docker-for-local-web-development-an-update.html
 * https://deliciousbrains.com/https-locally-without-browser-privacy-errors/
-* https://github.com/wyveo/craftcms-docker/blob/craft2/docker-compose.yml
 * [Craft CMS docker-compose dev setup](https://gist.github.com/jackmcpickle/59efc98a99c067b08020)
 * https://github.com/pnglabz/docker-compose-lamp
 * https://github.com/elalemanyo/docker-localhost

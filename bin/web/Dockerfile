@@ -2,9 +2,11 @@
 # https://github.com/wyveo/craftcms-docker/blob/craft2/Dockerfile
 FROM wyveo/nginx-php-fpm:php71
 
+# We should figure out how to interpolate REDIS_PORT in the sed below
 ENV REDIS_PORT tcp://redis:6379
 
 # Remove default webroot files & set PHP session handler to Redis
+# & ensure Redis errors go to logs
 RUN rm -rf /usr/share/nginx/html/* && \
 sed -i -e "s/pm.max_children\s*=\s*.*/pm.max_children = 25/g" ${fpm_conf} && \
 sed -i -e "s/;php_admin_flag\[log_errors\]\s=\son/php_admin_flag\[log_errors\] = on/g" ${fpm_conf} && \

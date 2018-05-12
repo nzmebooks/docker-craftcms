@@ -19,7 +19,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./volumes/etc/traefik:/etc/traefik
-      - ./volumes/var/log/traefik:/var/log/traefik
     labels:
       traefik.enable: "true"
       traefik.backend: traefik
@@ -64,7 +63,7 @@ services:
     image: redis:4.0.9-alpine
     container_name: "redis.${DOMAIN-docker-host}"
     volumes:
-      - ./volumes/var/lib/redis/data:/data
+      - ./volumes/data:/data
     depends_on:
       - traefik
 
@@ -89,7 +88,6 @@ services:
     volumes:
       - ./site/craft:/usr/share/nginx/craft
       - ./site/html:/usr/share/nginx/html:ro
-      - ./volumes/var/log:/var/log
     labels:
       traefik.backend: "web"
       traefik.port: "80"
