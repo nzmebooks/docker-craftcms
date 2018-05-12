@@ -96,6 +96,8 @@ Navigate to https://<HOSTNAME>/admin to begin installing Craft 2.
 
     https://web.local.host/admin
 
+You may find that sometimes it takes a minute or so for mariab to have created the database, and until then you'll get an error saying that it can't connect to the database -- just try again after a little while (should be no longer than 1 minute).
+
 
 ## MySQL
 

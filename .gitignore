@@ -1,14 +1,5 @@
 /.env
 
-/craft
-
-/volumes/usr/share/nginx/*
-/volumes/var/lib/mysql/*
-/volumes/var/lib/redis/*
-
-/volumes/var/log/*
-!/volumes/var/log/*/
-
 # OS
 .DS_Store
 Thumbs.db
