@@ -42,20 +42,21 @@ services:
     depends_on:
       - traefik
 
-  mariadb:
-    image: mariadb:10.3.6
-    container_name: "mariadb.${DOMAIN-docker-host}"
+  postgres:
+    image: postgres:10.3
+    container_name: "postgres.${DOMAIN-docker-host}"
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
-      MYSQL_USER: "${DB_USERNAME}"
-      MYSQL_PASSWORD: "${DB_PASSWORD}"
-      # Only specify the DB_NAME if we want a db created with this name
-      MYSQL_DATABASE: "${DB_NAME}"
+      POSTGRES_USER: "$DB_USER"
+      POSTGRES_PASSWORD: "$DB_PASSWORD"
+      # Only specify the DB_DATABASE if we want a db created with this name
+      POSTGRES_DB: "$DB_DATABASE"
+      POSTGRES_INITDB_ARGS: "-E UTF8"
     restart: unless-stopped
     ports:
-      - 3306:3306
+      - 5432:5432
     volumes:
-      - ./volumes/var/lib/mysql:/var/lib/mysql
+      # Persistent data
+      - ./volumes/var/lib/postgresql/data:/var/lib/postgresql/data
     depends_on:
       - traefik
 
@@ -79,20 +80,22 @@ services:
       # REDIS is linked
       REDIS_HOST: redis
       # DB is linked
-      DB_HOST: mariadb
-      DB_NAME: "${DB_NAME}"
-      DB_PORT: 3306
-      DB_USER: "${DB_USERNAME}"
-      DB_PASS: "${DB_PASSWORD}"
+      DB_DRIVER: pgsql
+      DB_SERVER: postgres
+      DB_DATABASE: "${DB_DATABASE}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      PGPASSWORD: "${DB_PASSWORD}"
+      DB_SCHEMA: public
+      DB_PORT: "${DB_PORT}"
+      DB_USER: "${DB_USER}"
     restart: unless-stopped
     volumes:
-      - ./site/craft:/usr/share/nginx/craft
-      - ./site/html:/usr/share/nginx/html:ro
+      - ./craft:/usr/share/nginx
     labels:
       traefik.backend: "web"
       traefik.port: "80"
       traefik.frontend.rule: "Host:web.${DOMAIN-docker-host}"
       traefik.frontend.passHostHeader: "true"
     depends_on:
-      - mariadb
+      - postgres
       - redis

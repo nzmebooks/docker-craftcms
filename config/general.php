@@ -1,69 +1,82 @@
 <?php
-
 /**
  * General Configuration
  *
- * All of your system's general configuration settings go in here.
- * You can see a list of the default settings in craft/app/etc/config/defaults/general.php
+ * All of your system's general configuration settings go in here. You can see a
+ * list of the available settings in vendor/craftcms/cms/src/config/GeneralConfig.php.
+ *
+ * @see craft\config\GeneralConfig
  */
 
-return array(
+return [
+    // Global settings
+    '*' => [
+        // Default Week Start Day (0 = Sunday, 1 = Monday...)
+        'defaultWeekStartDay' => 0,
 
-  // Base site URL
-  'siteUrl' => null,
+        // Enable CSRF Protection (recommended)
+        'enableCsrfProtection' => true,
 
-  // Environment-specific variables (see https://craftcms.com/docs/multi-environment-configs#environment-specific-variables)
-  'environmentVariables' => array(),
+        // Whether "index.php" should be visible in URLs (true, false, "auto")
+        'omitScriptNameInUrls' => true,
 
-  // Default Week Start Day (0 = Sunday, 1 = Monday...)
-  'defaultWeekStartDay' => 0,
+        // Control Panel trigger word
+        'cpTrigger' => 'admin',
 
-  // Enable CSRF Protection (recommended, will be enabled by default in Craft 3)
-  'enableCsrfProtection' => true,
+        // The secure key Craft will use for hashing and encrypting data
+        'securityKey' => getenv('SECURITY_KEY'),
 
-  // Whether "index.php" should be visible in URLs (true, false, "auto")
-  'omitScriptNameInUrls' => true,
+        'allowUpdates' => false,
 
-  // Control Panel trigger word
-  'cpTrigger' => 'admin',
+        'addTrailingSlashesToUrls' => true,
 
-  'allowAutoUpdates' => false,
+        // 32MB
+        'maxUploadFileSize' => 33554432,
 
-  'addTrailingSlashesToUrls' => true,
+        'defaultImageQuality' => 75,
 
-  // 32MB
-  'maxUploadFileSize' => 33554432,
+        'imageDriver' => 'imagick',
 
-  'defaultImageQuality' => 75,
+        'generateTransformsBeforePageLoad' => true,
 
-  'imageDriver' => 'imagick',
+        'sendPoweredByHeader' => false,
 
-  'generateTransformsBeforePageLoad' => true,
+        'useEmailAsUsername' => true,
 
-  'sendPoweredByHeader' => false,
+        'deferPublicRegistrationPassword' => true,
 
-  'cacheMethod' => 'redis',
+        'autoLoginAfterAccountActivation' => true,
 
-  'useEmailAsUsername' => true,
+        // User account related paths
+        // 'loginPath'                   => 'login',
+        // 'logoutPath'                  => 'logout',
+        // 'setPasswordPath'             => 'members/set-password',
+        // 'setPasswordSuccessPath'      => 'members',
+        // 'activateAccountSuccessPath'  => 'members?activate=success',
+        // 'invalidUserTokenPath'        => 'members?activate=fail',
 
-  'deferPublicRegistrationPassword' => true,
+          // Dev Mode (see https://craftcms.com/support/dev-mode)
+        'devMode' => false,
+    ],
 
-  'autoLoginAfterAccountActivation' => true,
+    // Dev environment settings
+    'dev' => [
+        // Base site URL
+        'siteUrl' => null,
 
-  'verificationCodeDuration' => 'P7D',
+        // Dev Mode (see https://craftcms.com/support/dev-mode)
+        'devMode' => true,
+    ],
 
-  // In case Apache is not configured to properly save PHP session information.
-  // This is the case when you keep getting automatically logged out from admin.
-  //'overridePhpSessionLocation' => true,
+    // Staging environment settings
+    'staging' => [
+        // Base site URL
+        'siteUrl' => null,
+    ],
 
-  // User account related paths
-  // 'loginPath'                   => 'login',
-  // 'logoutPath'                  => 'logout',
-  // 'setPasswordPath'             => 'members/set-password',
-  // 'setPasswordSuccessPath'      => 'members',
-  // 'activateAccountSuccessPath'  => 'members?activate=success',
-  // 'activateAccountFailurePath'  => 'members?activate=fail',
-
-  // Dev Mode (see https://craftcms.com/support/dev-mode)
-  'devMode' => false,
-);
+    // Production environment settings
+    'production' => [
+        // Base site URL
+        'siteUrl' => null,
+    ],
+];

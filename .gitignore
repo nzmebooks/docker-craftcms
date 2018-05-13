@@ -1,4 +1,6 @@
 /.env
+/craft
+/craft/.env
 
 # OS
 .DS_Store

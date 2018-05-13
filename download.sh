@@ -1,23 +1,21 @@
 #!/bin/bash
 
-# Set craft cms version
-CRAFT_VERSION=2.6 CRAFT_BUILD=3015
-
-CRAFT_ZIP=Craft-$CRAFT_VERSION.$CRAFT_BUILD.zip
-
 # Download the latest Craft (https://craftcms.com/support/download-previous-versions)
-echo "Downloading $CRAFT_ZIP"
-curl -L https://download.buildwithcraft.com/craft/$CRAFT_VERSION/$CRAFT_VERSION.$CRAFT_BUILD/$CRAFT_ZIP -o /tmp/$CRAFT_ZIP
+echo "Installing latest craft 3 using composer"
 
-# Extract craft
-echo "Unzipping $CRAFT_ZIP"
-unzip -qqo /tmp/$CRAFT_ZIP 'craft/*' -d ./site&& \
-unzip -qqoj /tmp/$CRAFT_ZIP 'public/index.php' -d ./site/html
+# Create Craft project
+composer create-project craftcms/craft ./craft/
+
+# Install the yii2-redis library
+composer require --prefer-dist yiisoft/yii2-redis -d ./craft/
+
+# Add database environment
+cp .env ./craft/.env
+
+# Cleanup
+chown -Rf nginx:nginx ./craft
 
 echo "Moving in config"
-cp config/* ./site/craft/config/
-
-echo "Cleaning up"
-rm /tmp/$CRAFT_ZIP
+cp config/* ./craft/config/
 
 echo "Finished!"
