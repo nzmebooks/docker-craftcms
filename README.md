@@ -15,6 +15,41 @@ Note that, unlike [craftcms-docker](https://github.com/nzmebooks/craftcms-docker
 
 We use basic auth on the traefik and portainer services, to allow a semblance of security in a production setting.
 
+## Versioning
+| Docker Tag | Git Branch | Craft Release | Database | Caching |
+|-----|-------|-----|--------|--------|
+| latest | craft3 | 3.0.4 | PostgreSQL 10.3 | Redis 4.0.9 |
+| craft2 | craft2 | 2.6.3015 | MariaDB 10.3.6 | Redis 4.0.9 |
+
+Features:
+
+ - Nginx 1.13.x, PHP-FPM 7.2.x / 7.1.x, Git 2.11.0
+ - imageMagick image manipulation library
+
+### Craft 3
+
+#### Prerequisites
+
+Ensure you have composer 1.3.0+
+
+    # on a Mac, using HomeBrew:
+    brew install composer
+    composer -V
+
+Ensure you have the `psql` client if you want to connect to the database from outside the container
+
+    # https://stackoverflow.com/a/46703723/2238105
+    brew install postgres
+
+Clone the Craft 3 branch of this repo:
+
+    git clone https://github.com/nzmebooks/docker-craftcms.git
+
+### Craft 2
+
+Clone the Craft 2 branch of this repo:
+
+    git clone b craft2 --single-branch https://github.com/nzmebooks/docker-craftcms.git
 
 ## Setup
 

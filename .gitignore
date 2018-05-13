@@ -1,4 +1,6 @@
 /.env
+/craft
+/volumes/var/lib/postgresql/
 
 # OS
 .DS_Store
