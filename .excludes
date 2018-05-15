@@ -1,0 +1,13 @@
+# A list of files and directories we'd like to exclude from
+# being synced to the server by our ansible playbook
+
+.git
+.editorconfig
+.env.example
+.gitignore
+download.sh
+LICENSE
+README.md
+ansible
+
+#volumes/var/lib/postgresql/data/

@@ -1,0 +1,29 @@
+---
+# defaults file for ansible-role-common
+
+ansible_role_common:
+  locale: "en_NZ"
+
+  packages:
+  - apt-transport-https
+  - build-essential
+  - curl
+  - cron-apt
+  - fail2ban
+  - git
+  - imagemagick
+  - ncdu
+  - rsync
+  - tree
+  - ufw
+  - unattended-upgrades
+  - unzip
+  - vim
+  - wget
+  - zip
+
+  authorized_ports:
+  - 22
+  - 80
+  - 443
+  - 587

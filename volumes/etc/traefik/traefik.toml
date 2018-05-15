@@ -49,8 +49,8 @@ defaultEntryPoints = ["http", "https"]
       # to generate a cert.
       # This allows us to use the following for local development (as Lets Encrypt
       # won't be able to verify them), but defer to Lets Encrypt when on a real server.
-      certFile = "/etc/traefik/local.host.crt"
-      keyFile = "/etc/traefik/local.host.key"
+      # certFile = "/etc/traefik/local.host.crt"
+      # keyFile = "/etc/traefik/local.host.key"
 
   # Traefik status page
   [entryPoints.traefik]

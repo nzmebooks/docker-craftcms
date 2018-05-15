@@ -1,0 +1,11 @@
+# Install a role from GitHub
+- name: ansible-role-users
+  src: https://github.com/jcdarwin/ansible-role-users
+
+# Install a role from GitHub
+- name: ansible-role-common
+  src: https://github.com/jcdarwin/ansible-role-common
+
+# Install a role from GitHub
+- name: ansible-docker
+  src: https://github.com/nickjj/ansible-docker

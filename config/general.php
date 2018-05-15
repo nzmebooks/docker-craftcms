@@ -17,7 +17,7 @@ return [
         // Enable CSRF Protection (recommended)
         'enableCsrfProtection' => true,
 
-        // Whether "index.php" should be visible in URLs (true, false, "auto")
+        // Whether "index.php" should be visible in URLs (true, false)
         'omitScriptNameInUrls' => true,
 
         // Control Panel trigger word

@@ -27,6 +27,7 @@ Features:
  - Nginx 1.13.x, PHP-FPM 7.2.x / 7.1.x, Git 2.11.0
  - imageMagick image manipulation library
 
+
 ### Craft 3
 
 #### Prerequisites
@@ -52,6 +53,7 @@ Clone the Craft 2 branch of this repo:
 
     git clone b craft2 --single-branch https://github.com/nzmebooks/docker-craftcms.git
 
+
 ## Setup
 
 Copy `.env.example` to `.env`, and amend accordingly.
@@ -60,7 +62,7 @@ The value of `DOMAIN` specifies the domain that the services will be exposed as.
 
 * https://traefik.local.host
 * https://portainer.local.host
-* https://web.local.host
+* https://local.host
 
 If you're developing locally, you'll want to ensure DNS is set in `/etc/hosts` for the above routes pointing to 127.0.0.1:
 
@@ -68,12 +70,12 @@ If you're developing locally, you'll want to ensure DNS is set in `/etc/hosts` f
 # Adds:
 # 127.0.0.1	traefik.local.host
 # 127.0.0.1	portainer.local.host
-# 127.0.0.1	web.local.host
+# 127.0.0.1	local.host
 
 DOMAIN=local.host
 sudo -- sh -c -e "echo '127.0.0.1\ttraefik.$DOMAIN' >> /etc/hosts";
 sudo -- sh -c -e "echo '127.0.0.1\tportainer.$DOMAIN' >> /etc/hosts";
-sudo -- sh -c -e "echo '127.0.0.1\tweb.$DOMAIN' >> /etc/hosts";
+sudo -- sh -c -e "echo '127.0.0.1\t$DOMAIN' >> /etc/hosts";
 ```
 
 Alternatively, you could use [Dnsmasq](https://github.com/elalemanyo/docker-localhost#hosts-file---wildcard-dns-domain-on-mac-os-x).
@@ -115,22 +117,22 @@ Use `docker-compose` to start, stop and destroy the stack:
 
     # run a shell in the container
     # note that some images (redis, traefik) use alpine, therefore bin/ash
-    docker exec -it web.local.host /bin/bash
+    docker exec -it local.host /bin/bash
     docker exec -it redis.local.host /bin/ash
 
     # view logs (also available via portainer)
-    docker logs web.local.host
-    docker exec -it web.local.host ls -la /var/log/
+    docker logs local.host
+    docker exec -it local.host ls -la /var/log/
 
 Once the stack is up, you should be able to visit the following in your browser:
 
 * https://traefik.local.host
 * https://portainer.local.host
-* https://web.local.host/info.php
+* https://local.host/info.php
 
 Navigate to https://<HOSTNAME>/admin to begin installing Craft.
 
-    https://web.local.host/admin
+    https://local.host/admin
 
 You may find that sometimes it takes a minute or so for mariab to have created the database, and until then you'll get an error saying that it can't connect to the database -- just try again after a little while (should be no longer than 1 minute).
 
@@ -174,7 +176,13 @@ Postgres creates the database on the first run of the container, so if you need 
 
     rm -rf ./volumes/var/lib/postgresql/data/*
 
-# Further reading
+
+## Ansible
+
+Notes about installing our docker-compose stack onto a Ubuntu server using ansible can be found in the [README in the ansible directory](./ansible/README.md).
+
+
+## Further reading
 
 * https://github.com/wyveo/craftcms-docker/blob/craft2/docker-compose.yml
 * http://tech.osteel.me/posts/2017/01/15/how-to-use-docker-for-local-web-development-an-update.html

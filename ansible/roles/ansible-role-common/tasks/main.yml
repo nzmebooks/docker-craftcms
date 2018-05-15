@@ -1,0 +1,31 @@
+---
+# tasks file for ansible-role-common
+- name: Ensure our locale is set
+  lineinfile:
+    dest=/etc/environment
+    regexp='^LC_ALL="{{ ansible_role_common.locale }}.UTF-8"'
+    line='LC_ALL="{{ ansible_role_common.locale }}.UTF-8"'
+    state=present
+
+- name: Update apt cache
+  apt:
+    update_cache=yes
+    cache_valid_time=3600 # run apt-get update if the last one is more than 1 hour ago
+
+- name: Install common packages
+  apt:
+    pkg={{ item }}
+    state=latest
+  with_items: "{{ ansible_role_common.packages }}"
+  notify:
+    - restart fail2ban
+
+- name: Reset firewall
+  action: shell ufw --force reset
+
+- name: Allow firewall authorized ports
+  action: shell ufw allow {{ item }}
+  with_items: "{{ ansible_role_common.authorized_ports }}"
+
+- name: Enable firewall
+  action: shell ufw --force enable

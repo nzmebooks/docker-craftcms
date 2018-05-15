@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 
 services:
   traefik:
@@ -7,9 +7,9 @@ services:
       args:
         - BASIC_AUTH_USERNAME=$BASIC_AUTH_USERNAME
         - BASIC_AUTH_PASSWORD=$BASIC_AUTH_PASSWORD
-    container_name: "traefik.${DOMAIN-docker-host}"
+    container_name: "traefik.${DOMAIN}"
     restart: unless-stopped
-    command: -c /dev/null --api --docker --logLevel=DEBUG --acme.email=$EMAIL --configFile=/etc/traefik/traefik.toml
+    command: -c /dev/null --api --docker --logLevel=DEBUG --acme.email=$EMAIL --configFile=/etc/traefik/traefik.toml --entryPoints='Name:https Address::443 TLS:/etc/traefik/${DOMAIN}.crt,/etc/traefik/${DOMAIN}.key'
     ports:
       - 80:80
       - 443:443
@@ -18,16 +18,16 @@ services:
       - 8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./volumes/etc/traefik:/etc/traefik
+      - $VOLUMES_PREFIX/etc/traefik:/etc/traefik
     labels:
-      traefik.enable: "true"
-      traefik.backend: traefik
-      traefik.frontend.rule: "Host:traefik.${DOMAIN-docker-host}"
-      traefik.port: "8080"
+      - "traefik.enable=true"
+      - "traefik.backend=traefik"
+      - "traefik.frontend.rule:=Host:traefik.${DOMAIN}"
+      - "traefik.port=8080"
 
   portainer:
     image: portainer/portainer
-    container_name: "portainer.${DOMAIN-docker-host}"
+    container_name: "portainer.${DOMAIN}"
     restart: unless-stopped
     command: --no-auth -H unix:///var/run/docker.sock
     volumes:
@@ -37,14 +37,14 @@ services:
       # variables to be properly escaped
       - "traefik.backend=portainer"
       - "traefik.port=9000"
-      - "traefik.frontend.rule=Host:portainer.${DOMAIN-docker-host}"
+      - "traefik.frontend.rule=Host:portainer.${DOMAIN}"
       - 'traefik.frontend.auth.basic=${BASIC_AUTH_USERNAME}:${BASIC_AUTH_PASSWORD_ENCRYPTED}'
     depends_on:
       - traefik
 
   postgres:
     image: postgres:10.3
-    container_name: "postgres.${DOMAIN-docker-host}"
+    container_name: "postgres.${DOMAIN}"
     environment:
       POSTGRES_USER: "$DB_USER"
       POSTGRES_PASSWORD: "$DB_PASSWORD"
@@ -56,15 +56,15 @@ services:
       - 5432:5432
     volumes:
       # Persistent data
-      - ./volumes/var/lib/postgresql/data:/var/lib/postgresql/data
+      - $VOLUMES_PREFIX/var/lib/postgresql/data:/var/lib/postgresql/data
     depends_on:
       - traefik
 
   redis:
     image: redis:4.0.9-alpine
-    container_name: "redis.${DOMAIN-docker-host}"
+    container_name: "redis.${DOMAIN}"
     volumes:
-      - ./volumes/data:/data
+      - $VOLUMES_PREFIX/data:/data
     depends_on:
       - traefik
 
@@ -73,7 +73,7 @@ services:
       context: ./bin/web
       args:
         - REDIS_PORT=tcp://redis:6379
-    container_name: "web.${DOMAIN-docker-host}"
+    container_name: "${DOMAIN}"
     environment:
       # Set locale to UTF-8 (https://oncletom.io/2015/docker-encoding/)
       LANG: C.UTF-8
@@ -90,11 +90,12 @@ services:
       DB_USER: "${DB_USER}"
     restart: unless-stopped
     volumes:
-      - ./craft:/usr/share/nginx
+      # - ./craft:/usr/share/nginx
+      - $VOLUMES_PREFIX_CRAFT./craft:/usr/share/nginx
     labels:
       traefik.backend: "web"
       traefik.port: "80"
-      traefik.frontend.rule: "Host:web.${DOMAIN-docker-host}"
+      traefik.frontend.rule: "Host:${DOMAIN}"
       traefik.frontend.passHostHeader: "true"
     depends_on:
       - postgres

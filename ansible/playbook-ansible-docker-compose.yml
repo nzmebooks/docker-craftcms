@@ -1,0 +1,25 @@
+- hosts: remote
+  remote_user: deploy
+  become: true
+  become_user: root
+  become_method: sudo
+
+  tasks:
+  - set_fact: compose_dir=/usr/local/lib/ansible-docker-compose
+
+  - name: Ensure our project directory exists
+    file:
+      path: "{{ compose_dir }}"
+      state: directory
+
+  - name: Upload docker-compose files to the project directory
+    synchronize:
+      src: "{{ item }}"
+      dest: "{{ compose_dir }}"
+      rsync_opts:
+        - "--exclude-from=../.excludes"
+    with_items:
+      - ../../
+
+  - name: Start our stack
+    command: chdir={{ compose_dir }} docker-compose up -d --build

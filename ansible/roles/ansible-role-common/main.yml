@@ -1,0 +1,12 @@
+---
+
+# - hosts: all
+#   remote_user: root
+#   become: true
+#   become_user: root
+#   become_method: sudo
+# #   tags: common
+#   handlers:
+#   - include: handlers/main.yml
+#   tasks:
+#   - include: tasks/common_install.yml
