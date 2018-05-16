@@ -81,18 +81,26 @@ sudo -- sh -c -e "echo '127.0.0.1\t$DOMAIN' >> /etc/hosts";
 Alternatively, you could use [Dnsmasq](https://github.com/elalemanyo/docker-localhost#hosts-file---wildcard-dns-domain-on-mac-os-x).
 
 
-If you want to use a domain other than the default `local.host` domain, you'll want to create a cert -- we suggest using the [wildcard](https://github.com/jcdarwin/wildcard) script, but that's up to you.
+## Certs
 
-Once your cert has been created, you'll want to copy them to `/etc/traefik/`, and amend the following lines in `/etc/traefik/traefik.toml` accordingly:
+Traefik will use Lets Encrypt to generate certs for TLS (i.e. https) when it starts up.
+However, for this to work, the server it's deployed to has have DNS pointing to it in order for Lets Encrypt acme challenge to work.
 
-    certFile = "/etc/traefik/local.host.crt"
-    keyFile = "/etc/traefik/local.host.key"
+If this is a problem (say, because you're deploying to a server for which you haven't yet set up proper DNS but are relying on host file entries, or are developing on localhost and want to use a domain other than the default `local.host` domain), then you'll want to create a cert -- we suggest using the [wildcard](https://github.com/jcdarwin/wildcard) script, but that's up to you.
+
+Once the cert and associated private key are generated, place them in `/etc/traefik/` and ensure the `command` for the traefik service in `docker-compose.yml` is configured to use the certs, e.g.:
+
+        command: -c /dev/null --api --docker --logLevel=DEBUG --acme.email=$EMAIL --configFile=/etc/traefik/traefik.toml --entryPoints='Name:https Address::443 TLS:/etc/traefik/${DOMAIN}.crt,/etc/traefik/${DOMAIN}.key'
 
 Presuming you're on a Mac, you'll also want to register the cert as trusted so the browser doesn't complain -- this can be done at the command line using a command such as the following:
 
     sudo security add-trusted-cert -d  -k /Library/Keychains/System.keychain ./etc/traefik/local.host.crt
 
 Note: originally we did try to use `localhost` as our domain, however Chrome doesn't seem to like a domain with only a single step.
+
+If you are relying on Traefik to use Lets Encrypt to generate certs, then the `command` for the traefik service in `docker-compose.yml` should not be configured to use the certs, e.g.:
+
+        command: -c /dev/null --api --docker --logLevel=DEBUG --acme.email=$EMAIL --configFile=/etc/traefik/traefik.toml --entryPoints='Name:https Address::443 TLS'
 
 
 ## Usage
