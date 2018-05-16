@@ -10,4 +10,5 @@ LICENSE
 README.md
 ansible
 
-#volumes/var/lib/postgresql/data/
+volumes/var/lib/postgresql/data/
+#volumes/var/lib/mysql/data/
