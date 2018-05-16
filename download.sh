@@ -14,6 +14,7 @@ cp .env ./craft/.env
 
 # Cleanup
 chown -Rf nginx:nginx ./craft
+chmod -R a+w ./craft/storage/runtime/compiled_templates
 
 echo "Moving in config"
 cp config/* ./craft/config/
