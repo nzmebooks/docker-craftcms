@@ -20,10 +20,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - $VOLUMES_PREFIX/etc/traefik:/etc/traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.backend=traefik"
-      - "traefik.frontend.rule:=Host:traefik.${DOMAIN}"
-      - "traefik.port=8080"
+      traefik.enable: "true"
+      traefik.backend: traefik
+      traefik.frontend.rule: "Host:traefik.${DOMAIN}"
+      traefik.port: "8080"
 
   portainer:
     image: portainer/portainer
@@ -42,23 +42,40 @@ services:
     depends_on:
       - traefik
 
-  postgres:
-    image: postgres:10.3
-    container_name: "postgres.${DOMAIN}"
+  mariadb:
+    image: mariadb:10.3.6
+    container_name: "mariadb.${DOMAIN}"
     environment:
-      POSTGRES_USER: "$DB_USER"
-      POSTGRES_PASSWORD: "$DB_PASSWORD"
+      MYSQL_ROOT_PASSWORD: "$DB_PASSWORD"
+      MYSQL_USER: "$DB_USER"
+      MYSQL_PASSWORD: "$DB_PASSWORD"
       # Only specify the DB_DATABASE if we want a db created with this name
-      POSTGRES_DB: "$DB_DATABASE"
-      POSTGRES_INITDB_ARGS: "-E UTF8"
+      MYSQL_DATABASE: "$DB_DATABASE"
     restart: unless-stopped
     ports:
-      - 5432:5432
+      - 3306:3306
     volumes:
-      # Persistent data
-      - $VOLUMES_PREFIX/var/lib/postgresql/data:/var/lib/postgresql/data
+      - $VOLUMES_PREFIX/var/lib/mysql:/var/lib/mysql
     depends_on:
       - traefik
+
+  # postgres:
+  #   image: postgres:10.3
+  #   container_name: "postgres.${DOMAIN}"
+  #   environment:
+  #     POSTGRES_USER: "$DB_USER"
+  #     POSTGRES_PASSWORD: "$DB_PASSWORD"
+  #     # Only specify the DB_DATABASE if we want a db created with this name
+  #     POSTGRES_DB: "$DB_DATABASE"
+  #     POSTGRES_INITDB_ARGS: "-E UTF8"
+  #   restart: unless-stopped
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     # Persistent data
+  #     - $VOLUMES_PREFIX/var/lib/postgresql/data:/var/lib/postgresql/data
+  #   depends_on:
+  #     - traefik
 
   redis:
     image: redis:4.0.9-alpine
@@ -80,8 +97,10 @@ services:
       # REDIS is linked
       REDIS_HOST: redis
       # DB is linked
-      DB_DRIVER: pgsql
-      DB_SERVER: postgres
+      DB_DRIVER: mysql
+      # DB_DRIVER: pgsql
+      DB_SERVER: mariadb
+      # DB_SERVER: postgres
       DB_DATABASE: "${DB_DATABASE}"
       DB_PASSWORD: "${DB_PASSWORD}"
       PGPASSWORD: "${DB_PASSWORD}"
@@ -93,10 +112,14 @@ services:
       # - ./craft:/usr/share/nginx
       - $VOLUMES_PREFIX_CRAFT./craft:/usr/share/nginx
     labels:
-      traefik.backend: "web"
-      traefik.port: "80"
-      traefik.frontend.rule: "Host:${DOMAIN}"
-      traefik.frontend.passHostHeader: "true"
+      # Use the following yaml formatting to allow our basic auth
+      # variables to be properly escaped
+      - "traefik.backend=web"
+      - "traefik.port=80"
+      - "traefik.frontend.rule=Host:${DOMAIN}"
+      - "traefik.frontend.passHostHeader=true"
+      - 'traefik.frontend.auth.basic=${BASIC_AUTH_USERNAME}:${BASIC_AUTH_PASSWORD_ENCRYPTED}'
     depends_on:
-      - postgres
+      - mariadb
+      # - postgres
       - redis
