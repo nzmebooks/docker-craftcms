@@ -198,3 +198,4 @@ Notes about installing our docker-compose stack onto a Ubuntu server using ansib
 * [Craft CMS docker-compose dev setup](https://gist.github.com/jackmcpickle/59efc98a99c067b08020)
 * https://github.com/pnglabz/docker-compose-lamp
 * https://github.com/elalemanyo/docker-localhost
+* https://github.com/urbantrout/craftcms
