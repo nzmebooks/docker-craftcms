@@ -110,7 +110,7 @@ services:
     restart: unless-stopped
     volumes:
       # - ./craft:/usr/share/nginx
-      - $VOLUMES_PREFIX_CRAFT./craft:/usr/share/nginx
+      - $VOLUMES_PREFIX_CRAFT./craft:/usr/share/nginx/html
     labels:
       # Use the following yaml formatting to allow our basic auth
       # variables to be properly escaped
