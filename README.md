@@ -169,6 +169,18 @@ Be sure to change this back once the install is complete
 TODO: figure out why we need the above hack
 
 
+## Rebuilding
+
+As per the [Docker compose docs](https://docs.docker.com/compose/production/#deploying-changes):
+
+When you make changes to your app code, remember to rebuild your image and recreate your app’s containers. To redeploy a service called `web`, use:
+
+    docker-compose build web
+    docker-compose up --no-deps -d web
+
+This first rebuilds the image for `web` and then stop, destroy, and recreate just the web service. The `--no-deps` flag prevents Compose from also recreating any services which `web` depends on.
+
+
 ## Postgres
 
 To connect to Postgres via, you'll need to do something like the following:
